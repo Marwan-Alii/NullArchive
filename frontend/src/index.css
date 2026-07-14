@@ -1,0 +1,24 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html { scroll-behavior: smooth; }
+  body {
+    @apply bg-paper text-ink font-sans antialiased;
+  }
+  ::selection { @apply bg-teal-light text-navy-dark; }
+  :focus-visible {
+    outline: 2px solid #1B3A6B;
+    outline-offset: 2px;
+  }
+}
+
+@layer components {
+  .container-page {
+    @apply max-w-6xl mx-auto px-6 md:px-8;
+  }
+  .stamp {
+    @apply inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-wider px-2 py-1 border rounded-sm;
+  }
+}
