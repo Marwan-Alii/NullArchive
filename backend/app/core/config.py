@@ -11,7 +11,7 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
     # Database
-    database_url: str = "postgresql+psycopg2://nullarchive:nullarchive@localhost:5432/nullarchive"
+    database_url: str = "postgresql+pg8000://nullarchive:nullarchive@localhost:5432/nullarchive"
 
     # Auth
     secret_key: str = "dev-secret-change-me"
