@@ -39,12 +39,12 @@ export default function About() {
         <p className="text-inkmute leading-relaxed">
           The repository is hosted at{" "}
           <a
-            href="https://github.com/nullarchive/nullarchive"
+            href="https://github.com/Marwan-Alii/NullArchive"
             className="text-navy hover:underline"
           >
-            github.com/nullarchive/nullarchive
-          </a>{" "}
-          (placeholder link — update once the project is published).
+            github.com/Marwan-Alii/NullArchive
+          </a>
+          .
         </p>
       </section>
     </div>

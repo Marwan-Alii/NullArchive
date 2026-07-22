@@ -6,9 +6,7 @@ export default function Footer() {
       <div className="container-page py-12 grid grid-cols-2 md:grid-cols-4 gap-8">
         <div className="col-span-2">
           <div className="flex items-center gap-2.5 mb-3">
-            <span className="w-6 h-6 rounded-sm bg-navy text-white flex items-center justify-center font-mono text-[10px] font-medium">
-              N∅
-            </span>
+            <img src="/logo.png" alt="NullArchive" className="w-6 h-6 object-contain" />
             <span className="font-serif text-base font-semibold">NullArchive</span>
           </div>
           <p className="text-sm text-inkmute max-w-sm leading-relaxed">
@@ -34,7 +32,7 @@ export default function Footer() {
           <ul className="space-y-2 text-sm">
             <li>
               <a
-                href="https://github.com/nullarchive/nullarchive"
+                href="https://github.com/Marwan-Alii/NullArchive"
                 className="text-inkmute hover:text-ink"
               >
                 GitHub

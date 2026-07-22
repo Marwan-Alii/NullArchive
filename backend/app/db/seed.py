@@ -16,11 +16,26 @@ CATEGORIES = [
     "Chemistry",
     "Mathematics",
     "Engineering",
+    "Medicine & Health Sciences",
+    "Psychology",
+    "Neuroscience",
+    "Environmental Science",
+    "Earth & Geological Sciences",
+    "Astronomy & Astrophysics",
+    "Materials Science",
+    "Economics",
+    "Social Sciences",
+    "Linguistics",
+    "Agriculture & Food Science",
+    "Education",
 ]
 
 
+import re
+
+
 def slugify(name: str) -> str:
-    return name.lower().replace(" ", "-")
+    return re.sub(r"[^a-z0-9]+", "-", name.lower()).strip("-")
 
 
 def run():

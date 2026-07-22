@@ -14,6 +14,18 @@ const fieldIcon: Record<string, string> = {
   Chemistry: "CH",
   Mathematics: "MA",
   Engineering: "EN",
+  "Medicine & Health Sciences": "MD",
+  Psychology: "PS",
+  Neuroscience: "NS",
+  "Environmental Science": "EV",
+  "Earth & Geological Sciences": "EG",
+  "Astronomy & Astrophysics": "AS",
+  "Materials Science": "MS",
+  Economics: "EC",
+  "Social Sciences": "SS",
+  Linguistics: "LN",
+  "Agriculture & Food Science": "AG",
+  Education: "ED",
 };
 
 export default function Landing() {

@@ -1,6 +1,7 @@
 import { Route, Routes } from "react-router-dom";
 import Header from "./components/layout/Header";
 import Footer from "./components/layout/Footer";
+import ScrollToHash from "./components/ScrollToHash";
 import Landing from "./pages/Landing";
 import Explore from "./pages/Explore";
 import ResearchDetail from "./pages/ResearchDetail";
@@ -14,6 +15,7 @@ import About from "./pages/About";
 export default function App() {
   return (
     <div className="min-h-screen flex flex-col">
+      <ScrollToHash />
       <Header />
       <main className="flex-1">
         <Routes>

@@ -15,9 +15,7 @@ export default function Header() {
     <header className="sticky top-0 z-40 bg-paper/95 backdrop-blur border-b border-line">
       <div className="container-page flex items-center justify-between h-16">
         <Link to="/" className="flex items-center gap-2.5 group">
-          <span className="w-7 h-7 rounded-sm bg-navy text-white flex items-center justify-center font-mono text-xs font-medium">
-            N∅
-          </span>
+          <img src="/logo.png" alt="NullArchive" className="w-8 h-8 object-contain" />
           <span className="font-serif text-lg font-semibold tracking-tight text-ink">
             NullArchive
           </span>

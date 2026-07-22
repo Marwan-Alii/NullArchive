@@ -40,10 +40,8 @@ const requiredFields: (keyof FormState)[] = [
   "category_id",
   "research_type",
   "abstract",
-  "research_question",
   "hypothesis",
   "methodology",
-  "expected_outcome",
   "actual_outcome",
   "why_it_failed",
   "lessons_learned",
@@ -262,7 +260,7 @@ export default function Submit() {
           <textarea className={inputClass(!!errors.abstract)} rows={3} value={form.abstract} onChange={(e) => update("abstract", e.target.value)} />
         </Field>
 
-        <Field label="Research Question" error={errors.research_question}>
+        <Field label="Research Question (optional)" error={errors.research_question}>
           <textarea className={inputClass(!!errors.research_question)} rows={2} value={form.research_question} onChange={(e) => update("research_question", e.target.value)} />
         </Field>
 
@@ -275,7 +273,7 @@ export default function Submit() {
         </Field>
 
         <div className="grid sm:grid-cols-2 gap-6">
-          <Field label="Expected Result" error={errors.expected_outcome}>
+          <Field label="Expected Result (optional)" error={errors.expected_outcome}>
             <textarea className={inputClass(!!errors.expected_outcome)} rows={3} value={form.expected_outcome} onChange={(e) => update("expected_outcome", e.target.value)} />
           </Field>
           <Field label="Actual Result" error={errors.actual_outcome}>
