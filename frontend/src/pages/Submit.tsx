@@ -57,6 +57,32 @@ const typeOptions: ResearchType[] = [
   "Unexpected Outcome",
 ];
 
+const EXTENSION_KIND: Record<string, "paper" | "image" | "code" | "data"> = {
+  pdf: "paper",
+  doc: "paper",
+  docx: "paper",
+  png: "image",
+  jpg: "image",
+  jpeg: "image",
+  gif: "image",
+  webp: "image",
+  py: "code",
+  js: "code",
+  ts: "code",
+  ipynb: "code",
+  zip: "code",
+  csv: "data",
+  json: "data",
+  xlsx: "data",
+  parquet: "data",
+  h5: "data",
+};
+
+function inferKind(filename: string): "paper" | "image" | "code" | "data" {
+  const ext = filename.split(".").pop()?.toLowerCase() ?? "";
+  return EXTENSION_KIND[ext] ?? "data";
+}
+
 export default function Submit() {
   const { user, loading: authLoading } = useAuth();
   const { categories } = useCategories();
@@ -66,6 +92,8 @@ export default function Submit() {
   const [submitted, setSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [files, setFiles] = useState<File[]>([]);
+  const [uploadStatus, setUploadStatus] = useState<string | null>(null);
 
   function update<K extends keyof FormState>(key: K, value: string) {
     setForm((f) => ({ ...f, [key]: value }));
@@ -91,11 +119,34 @@ export default function Submit() {
     setSubmitting(true);
     setSubmitError(null);
     try {
-      await api.post("/api/research", {
+      const entry = await api.post<{ slug: string }>("/api/research", {
         ...form,
         research_type: form.research_type,
         references: form.references || undefined,
       });
+
+      if (files.length > 0) {
+        setUploadStatus(`Uploading 1 of ${files.length}…`);
+        let failed = 0;
+        for (let i = 0; i < files.length; i++) {
+          const file = files[i];
+          setUploadStatus(`Uploading ${i + 1} of ${files.length}…`);
+          const formData = new FormData();
+          formData.append("file", file);
+          try {
+            await api.post(
+              `/api/research/${entry.slug}/attachments?kind=${inferKind(file.name)}`,
+              formData
+            );
+          } catch {
+            failed++;
+          }
+        }
+        setUploadStatus(
+          failed > 0 ? `${files.length - failed} of ${files.length} files uploaded (${failed} failed).` : null
+        );
+      }
+
       setSubmitted(true);
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (err) {
@@ -136,10 +187,18 @@ export default function Submit() {
           It's live and searchable in the Explorer right away. A reviewer
           approval step is planned for the future — for now, entries publish
           as soon as they're submitted.
+          {files.length > 0 && (
+            <>
+              {" "}
+              {uploadStatus ?? `All ${files.length} file${files.length !== 1 ? "s" : ""} uploaded successfully.`}
+            </>
+          )}
         </p>
         <button
           onClick={() => {
             setForm(initialState);
+            setFiles([]);
+            setUploadStatus(null);
             setSubmitted(false);
           }}
           className="text-navy font-medium hover:underline"
@@ -238,10 +297,49 @@ export default function Submit() {
 
         <div>
           <label className="text-sm font-medium text-ink block mb-2">Upload Files</label>
-          <div className="border border-dashed border-line rounded p-8 text-center text-sm text-inkmute bg-white">
-            File uploads are available after your entry is created — you'll be able to attach papers, images, code, or data from the entry's page once it exists.
-          </div>
+          <label className="block border border-dashed border-line rounded p-8 text-center text-sm text-inkmute bg-white cursor-pointer hover:border-navy/40 transition-colors">
+            <input
+              type="file"
+              multiple
+              className="hidden"
+              onChange={(e) => {
+                const picked = Array.from(e.target.files ?? []);
+                setFiles((prev) => [...prev, ...picked]);
+                e.target.value = "";
+              }}
+            />
+            Click to choose files, or drag them here — papers, images, code, or data.
+            <br />
+            <span className="text-xs">The type (paper/image/code/data) is detected automatically from the file extension.</span>
+          </label>
+
+          {files.length > 0 && (
+            <ul className="mt-3 space-y-1.5">
+              {files.map((f, i) => (
+                <li
+                  key={`${f.name}-${i}`}
+                  className="flex items-center justify-between text-sm border border-line rounded-sm px-3 py-2 bg-white"
+                >
+                  <span className="text-ink">
+                    {f.name}{" "}
+                    <span className="text-xs text-inkmute font-mono">({inferKind(f.name)})</span>
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setFiles((prev) => prev.filter((_, idx) => idx !== i))}
+                    className="text-xs text-inkmute hover:text-red-500"
+                  >
+                    Remove
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
+
+        {uploadStatus && (
+          <p className="text-sm text-inkmute">{uploadStatus}</p>
+        )}
 
         {submitError && (
           <p className="text-sm text-red-500 border border-red-200 bg-red-50 rounded-sm px-3 py-2">
@@ -258,7 +356,7 @@ export default function Submit() {
             disabled={submitting}
             className="bg-navy text-white font-medium px-6 py-3 rounded-sm hover:bg-navy-dark transition-colors disabled:opacity-50"
           >
-            {submitting ? "Submitting…" : "Submit for Review"}
+            {submitting ? (uploadStatus ?? "Submitting…") : "Submit for Review"}
           </button>
         </div>
       </form>
