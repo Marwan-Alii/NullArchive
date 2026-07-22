@@ -131,18 +131,21 @@ export default function ResearchDetail() {
             ) : (
               <div className="grid sm:grid-cols-2 gap-3">
                 {entry.attachments.map((att) => (
-                  <div
+                  <a
                     key={att.id}
-                    className="flex items-center gap-3 border border-line rounded-sm px-3 py-2.5 bg-white"
+                    href={att.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 border border-line rounded-sm px-3 py-2.5 bg-white hover:border-navy/40 transition-colors"
                   >
                     <span className="font-mono text-[10px] w-9 text-center bg-paper border border-line rounded-sm py-1 text-inkmute">
                       {attachmentIcon[att.kind]}
                     </span>
                     <div className="text-sm">
                       <p className="text-ink">{att.filename}</p>
-                      <p className="text-xs text-inkmute">{Math.round(att.size_bytes / 1024)} KB</p>
+                      <p className="text-xs text-inkmute">{Math.round(att.size_bytes / 1024)} KB · Download</p>
                     </div>
-                  </div>
+                  </a>
                 ))}
               </div>
             )}

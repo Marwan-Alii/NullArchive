@@ -63,9 +63,11 @@ class AttachmentOut(BaseModel):
     kind: AttachmentKind
     size_bytes: int
     uploaded_at: datetime
+    url: str = Field(validation_alias="storage_path")
 
     class Config:
         from_attributes = True
+        populate_by_name = True
 
 
 # ---------- Comments ----------

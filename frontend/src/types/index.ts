@@ -33,6 +33,7 @@ export interface Attachment {
   kind: AttachmentKind;
   size_bytes: number;
   uploaded_at: string;
+  url: string;
 }
 
 export interface Comment {
