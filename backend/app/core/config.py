@@ -28,6 +28,10 @@ class Settings(BaseSettings):
     # CORS
     frontend_origin: str = "http://localhost:5173"
 
+    # Outbound email (password reset), sent via Gmail's SMTP relay
+    gmail_address: str | None = None
+    gmail_app_password: str | None = None
+
 
 @lru_cache
 def get_settings() -> Settings:

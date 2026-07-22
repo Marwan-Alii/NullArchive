@@ -1,14 +1,24 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
+from jose import JWTError
 from sqlalchemy.orm import Session
 
-from app.core.security import create_access_token, hash_password, verify_password
+from app.core.config import get_settings
+from app.core.email import send_password_reset_email
+from app.core.security import (
+    create_access_token,
+    create_password_reset_token,
+    hash_password,
+    verify_password,
+    verify_password_reset_token,
+)
 from app.db.session import get_db
 from app.models.models import User
 from app.routers.deps import get_current_user
-from app.schemas.schemas import Token, UserCreate, UserOut
+from app.schemas.schemas import ResetPasswordRequest, Token, UserCreate, UserOut
 
 router = APIRouter(prefix="/api/auth", tags=["auth"])
+settings = get_settings()
 
 
 @router.post("/register", response_model=UserOut, status_code=status.HTTP_201_CREATED)
@@ -55,9 +65,31 @@ def forgot_password(email: str, db: Session = Depends(get_db)):
     # Always return the same response whether or not the account exists,
     # to avoid leaking which emails are registered.
     if user:
-        # TODO: generate a reset token and send it via an email provider.
-        pass
+        token = create_password_reset_token(user.id)
+        reset_link = f"{settings.frontend_origin}/reset-password?token={token}"
+        try:
+            send_password_reset_email(user.email, reset_link)
+        except Exception:
+            # Don't leak email-configuration errors to the client; the
+            # generic response below is returned either way.
+            pass
     return {"detail": "If an account exists for this email, a reset link has been sent."}
+
+
+@router.post("/reset-password")
+def reset_password(payload: ResetPasswordRequest, db: Session = Depends(get_db)):
+    try:
+        user_id = verify_password_reset_token(payload.token)
+    except JWTError:
+        raise HTTPException(status_code=400, detail="This reset link is invalid or has expired.")
+
+    user = db.get(User, user_id)
+    if not user:
+        raise HTTPException(status_code=400, detail="This reset link is invalid or has expired.")
+
+    user.hashed_password = hash_password(payload.new_password)
+    db.commit()
+    return {"detail": "Password updated. You can now log in with your new password."}
 
 
 @router.get("/me", response_model=UserOut)
